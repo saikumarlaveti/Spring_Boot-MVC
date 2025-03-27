@@ -1,4 +1,0 @@
-
-
-
-<jsp:forward page = "wish"/>
