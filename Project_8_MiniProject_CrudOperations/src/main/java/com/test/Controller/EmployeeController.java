@@ -3,11 +3,13 @@ package com.test.Controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.Model.Employee;
 import com.test.Service.EmployeeServiceManagement;
@@ -46,5 +48,31 @@ public class EmployeeController {
 		return "redirect:/report";
 	}
 
+	@GetMapping("/edit")
+	public String showEditEmployeeForm(@RequestParam("no") int no,@ModelAttribute("emp") Employee emp) {
+		Employee emp1 = service.getEmployeeByNo(no);
+		BeanUtils.copyProperties(emp1, emp);
+		return "employee_edit";
+	}
 
+	@PostMapping("/edit")
+	public String EditEmployeeForm(@ModelAttribute("emp") Employee emp,
+			Map<String,Object> map) {
+		String msg = service.editEmployee(emp);
+		List<Employee> list = service.getAllEmployees();
+		map.put("resultMsg", msg);
+		map.put("empsData", list);
+		return "employee_report";
+	}
+	
+	@GetMapping("/delete")
+	public String deleteEmployee(@RequestParam("no") int no,Map<String,Object> map) {
+		String msg = service.deleteById(no);
+		List<Employee> list = service.getAllEmployees();
+		map.put("resultMsg", msg);
+		map.put("empsData",list);
+		return "employee_report";
+	}
+	
+	
 }

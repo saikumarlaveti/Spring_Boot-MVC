@@ -19,7 +19,10 @@
 	<td>${emp.salary }</td>
 <td><a href="edit?no=${emp.empno}">
 <img src="images/edit.jpg" width="50" height="50"/></a> 
-<a href="delete?no=${emp.empno}">
+
+
+<a onclick="return confirm ('Do you want to delete')"
+href="delete?no=${emp.empno}">
 <img src="images/delete.png" width="50" height="50"/></a></td>
 </tr>
 </c:forEach>
