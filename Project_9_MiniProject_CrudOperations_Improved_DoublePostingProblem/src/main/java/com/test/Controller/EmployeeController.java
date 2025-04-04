@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.test.Model.Employee;
 import com.test.Service.EmployeeServiceManagement;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class EmployeeController {
@@ -38,14 +41,22 @@ public class EmployeeController {
 		return "empRegister";
 	}
 	
-	@PostMapping("/add")
-	public String addEmployeeForm(Map<String,Object >map,@ModelAttribute("emp") Employee emp) {
+/*	@PostMapping("/add")
+	public String addEmployeeForm(RedirectAttributes attrs,@ModelAttribute("emp") Employee emp) {
 		String result = service.saveEmployee(emp);
-		List<Employee> list = service.getAllEmployees();
-		map.put("resultMsg",result);
-		map.put("empsData", list);
-		emp.setSalary(20000);
-		return "employee_report";
+		//List<Employee> list = service.getAllEmployees();
+		//map.put("resultMsg",result);
+		attrs.addFlashAttribute("resultMsg",result);
+		return "redirect:report";
+	}
+	*/
+	@PostMapping("/add")
+	public String addEmployeeForm(HttpSession ses,@ModelAttribute("emp") Employee emp) {
+		String result = service.saveEmployee(emp);
+		//List<Employee> list = service.getAllEmployees();
+		//map.put("resultMsg",result);
+		ses.setAttribute("resultMsg",result);
+		return "redirect:report";
 	}
 
 	@GetMapping("/edit")
