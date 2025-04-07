@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.test.Model.Employee;
 import com.test.Service.EmployeeServiceManagement;
+import com.test.Validations.EmployeeValidatior;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,6 +23,9 @@ import jakarta.servlet.http.HttpSession;
 public class EmployeeController {
 	@Autowired
 	private EmployeeServiceManagement service;
+	
+	@Autowired
+	private EmployeeValidatior empValidator;
 	
 	@GetMapping("/")
 	public String welcomePage() {
@@ -42,12 +47,34 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/add")
-	public String addEmployeeForm(RedirectAttributes attrs,@ModelAttribute("emp") Employee emp) {
+	public String addEmployeeForm(RedirectAttributes attrs,
+			@ModelAttribute("emp") Employee emp,
+			BindingResult errors) {
+		if(emp.getJob().equalsIgnoreCase("hacker")) {
+			errors.rejectValue("job","job.reject");
+			return "empRegister";
+		}
+		//checking type mismatch error
+		if(errors.hasFieldErrors()) {
+			return "empRegister";
+		}
+		//checking form validation errors
+		if(empValidator.supports(emp.getClass())) {
+			empValidator.validate(emp, errors);
+			if(errors.hasErrors())
+				return "empRegister";
+		}
+		empValidator.validate(emp, errors);
+		if(errors.hasErrors()) {
+		    return "empRegister";
+		}
+
 		String result = service.saveEmployee(emp);
 		//List<Employee> list = service.getAllEmployees();
 		//map.put("resultMsg",result);
 		attrs.addFlashAttribute("resultMsg",result);
 		return "redirect:report";
+		
 	}
 	/*
 	@PostMapping("/add")
@@ -68,7 +95,13 @@ public class EmployeeController {
 
 	@PostMapping("/edit")
 	public String EditEmployeeForm(@ModelAttribute("emp") Employee emp,
-			RedirectAttributes attrs) {
+			RedirectAttributes attrs,
+			BindingResult errors) {
+		if(empValidator.supports(emp.getClass())) {
+			empValidator.validate(emp, errors);
+			if(errors.hasErrors())
+				return "empRegister";
+		}
 		String msg = service.editEmployee(emp);
 		attrs.addFlashAttribute("resultMsg",msg);
 		return "redirect:report";
