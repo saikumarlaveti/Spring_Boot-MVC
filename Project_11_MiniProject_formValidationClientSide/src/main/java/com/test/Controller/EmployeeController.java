@@ -1,4 +1,4 @@
-package com.test.Controller;
+ package com.test.Controller;
 
 import java.util.List;
 import java.util.Map;
@@ -50,12 +50,11 @@ public class EmployeeController {
 	public String addEmployeeForm(RedirectAttributes attrs,
 			@ModelAttribute("emp") Employee emp,
 			BindingResult errors) {
+		System.out.println("EmployeeOperationsController.addEmployee()");
 		//Business logic are called application logic errors
-		if(emp.getJob().equalsIgnoreCase("hacker")) {
-			errors.rejectValue("job","job.reject");
-			return "empRegister";
-		}
+		
 		//checking type mismatch error
+		if(emp.getVflag().equalsIgnoreCase("no")) {
 		if(errors.hasFieldErrors()) {
 			return "empRegister";
 		}
@@ -65,10 +64,15 @@ public class EmployeeController {
 			if(errors.hasErrors())
 				return "empRegister";
 		}
-		empValidator.validate(emp, errors);
-		if(errors.hasErrors()) {
-		    return "empRegister";
 		}
+		if(emp.getJob().equalsIgnoreCase("hacker")) {
+			errors.rejectValue("job","job.reject");
+			return "empRegister";
+		}
+//		empValidator.validate(emp, errors);
+//		if(errors.hasErrors()) {
+//		    return "empRegister";
+//		}
 
 		String result = service.saveEmployee(emp);
 		//List<Employee> list = service.getAllEmployees();
@@ -98,10 +102,14 @@ public class EmployeeController {
 	public String EditEmployeeForm(@ModelAttribute("emp") Employee emp,
 			RedirectAttributes attrs,
 			BindingResult errors) {
+		if(emp.getVflag().equalsIgnoreCase("no")) {
+			if(errors.hasFieldErrors())
+				return "employee_edit";
+		}
 		if(empValidator.supports(emp.getClass())) {
 			empValidator.validate(emp, errors);
 			if(errors.hasErrors())
-				return "empRegister";
+				return "employee_edit";
 		}
 		String msg = service.editEmployee(emp);
 		attrs.addFlashAttribute("resultMsg",msg);
