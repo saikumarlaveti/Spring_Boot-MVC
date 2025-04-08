@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
 
 import com.test.Model.Employee;
 import com.test.Service.EmployeeServiceManagement;
@@ -33,10 +38,12 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("/report")
-	public String showEmployeeReport(Map<String,Object> map) 
+	public String showEmployeeReport(@PageableDefault(page=0,size=3,sort="job",
+	direction = Sort.Direction.ASC) Pageable pageable,
+			Map<String,Object> map) 
 	{
-		List<Employee> list = service.getAllEmployees();
-		map.put("empsData", list);
+		Page<Employee> page = service.getEmployeesPageData(pageable);
+		map.put("empsData", page);
 		return "employee_report";
 	}
 	
