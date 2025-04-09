@@ -1,6 +1,7 @@
 package com.test.Service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
@@ -22,5 +23,7 @@ public interface EmployeeService {
 	
 	public Page<Employee> getEmployeesPageData(Pageable pageable); // pages are not getting update status column into active employee table
 
-
+	public Set<String> getAllCountries();
+	
+	public List<String> getStatesByCountry(String country);
 }
