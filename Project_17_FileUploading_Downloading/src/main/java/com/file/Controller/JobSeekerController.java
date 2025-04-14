@@ -1,9 +1,12 @@
 package com.file.Controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -13,11 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.file.Entity.JobSeeker;
 import com.file.Model.JobSeekerData;
 import com.file.Services.JobSeekerServicesIMPL;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class JobSeekerController {
@@ -82,4 +89,53 @@ public class JobSeekerController {
 		//return LVN
 		return "show_result";
 	}
+	
+	@GetMapping("/listOfJs")
+	public String getJobseekerDetails(Map<String,Object> map) {
+		List<JobSeeker> details= service.jobseekerDetails();
+		map.put("jsList", details);
+		
+		return "showReport";
+		
+	}
+	
+	@Autowired
+	private ServletContext sc;
+	@GetMapping("/download")
+	public String fileDownload(HttpServletResponse res,
+			@RequestParam("id")Integer id,
+			@RequestParam("type") String type) throws Exception {
+		String filePath = null;
+		if(type.equalsIgnoreCase("resume"))
+			filePath = service.fetchResumePathById(id);
+		else
+			filePath = service.fetchPhotoPathById(id);
+		System.out.println(filePath);
+		
+		File file = new File(filePath);
+		res.setContentLengthLong(file.length());
+		String mimeType = sc.getMimeType(filePath);
+		mimeType=mimeType==null?"application/octet-stream":mimeType;
+		res.setContentType(mimeType);
+		
+		///create InputStream pointing to the File
+		InputStream is = new FileInputStream(file);
+		
+		//create OutputStream pointing to response obj
+		
+		OutputStream os = res.getOutputStream();
+		res.setHeader("content-Disposition", "attachment;fileName="+file.getName());
+		IOUtils.copy(is, os);
+		
+		//close streams
+		is.close();
+		os.close();
+		
+		//makes the handler method to send response directly to browser
+		return null;
+	
+		
+	}
+	
+	
 }

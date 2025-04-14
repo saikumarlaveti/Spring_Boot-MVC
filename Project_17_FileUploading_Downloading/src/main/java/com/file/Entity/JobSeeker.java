@@ -14,7 +14,7 @@ public class JobSeeker {
 
 	@Id
 	@GeneratedValue
-	private Integer Id;
+	private Integer id;
 	
 	@Column(length=20)
 	private String name;
