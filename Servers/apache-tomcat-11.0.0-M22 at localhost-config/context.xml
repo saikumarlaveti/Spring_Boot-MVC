@@ -21,6 +21,16 @@
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>WEB-INF/tomcat-web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+     <Resource name="DsJndi"
+        	auth="Container"
+            type="javax.sql.DataSource"
+            username="root"
+            password="pass1234"
+            driverClassName="com.mysql.cj.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/springboot"
+            maxTotal="100"
+            maxIdle="30"
+            maxWaitMillis="10000"/>
 
     <!-- Uncomment this to enable session persistence across Tomcat restarts -->
     <!--
