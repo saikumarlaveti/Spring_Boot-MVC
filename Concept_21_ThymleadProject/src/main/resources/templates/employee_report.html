@@ -1,0 +1,63 @@
+<html xmlns:th="https://thmeleaf.org">
+
+<div th:if="${!empsData.empty}">
+
+<table border="1" bgcolor="cyan" align="center">
+<tr bgcolor="pink">
+	<th>EmpNo</th>
+	<th>EmpName</th>
+	<th>Job</th>
+	<th>Salary</th>
+	<th>Operations</th>
+</tr>
+
+<tr th:each="emp:${empsData}">
+		<td><span th:text="${emp.empno}"/></td>
+		<td><span th:text="${emp.ename}"/></td>
+		<td><span th:text="${emp.job}"/></td>
+		<td><span th:text="${emp.salary}"/></td>
+		<td> <a th:href="@{/emp/edit(no=${emp.empno})}">
+		<img th:src="@{/images/edit.jpg}" width="50" height="50"></a>
+		<a th:href="@{/emp/delete(no=${emp.empno})}" onclick="confirm('Do u want to delete')"><img th:src="@{/images/delete.png}" width="50" height="50"></a>
+		</td>
+		</tr>
+</table>
+</div>
+
+<div th:if="${empsData.empty}">
+	<h1 style="color:red;text-align:center">Records not found</h1>
+</div>
+
+<blink><h1 style="color:green;text-align:center" th:text="${resultMsg}"/></blink>
+
+<br>
+<h1 style="text-align:center"><a th:href="@{/emp/add}">Add Employee <img th:src="@{/images/add.png}" width="30" height="30"/></a></h1>
+
+<br>
+<br>
+<h1 style="text-align:center"/><a th:href="@{/emp}">home</a> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
